@@ -5,7 +5,7 @@ Dashboard Application
 A brief description of the project, e.g., "This is a Dashboard application built with Next.js and TypeScript that displays user data fetched from JSONPlaceholder API."
 
 ## Live Demo
-[Insert live URL here]
+https://dashboard-mpalw0ncg-sourav-mitras-projects.vercel.app/
 
 ## Features
 - User List Page with table/grid view
@@ -24,3 +24,41 @@ A brief description of the project, e.g., "This is a Dashboard application built
 - Deployment: Vercel
 
 ## Project Structure
+dashboard-app/
+│── src/
+│   ├── app/
+│   │   ├── layout.tsx         
+│   │   ├── page.tsx           
+│   │   └── users/
+│   │       ├── page.tsx       
+│   │       └── [id]/page.tsx   
+│   │
+│   ├── components/             
+│   │   ├── UserCard.tsx        
+│   │   ├── SearchBar.tsx       
+│   │   └── Pagination.tsx      
+│   │
+│   ├── types/                 
+│   │   └── User.ts             
+│   │# API helpers
+│   │   └── fetchUsers.ts       
+│   │
+│   └── styles/                
+│       └── globals.css
+│
+│── package.json
+│── tsconfig.json
+│── tailwind.config.js
+│── postcss.config.js
+│── next.config.js
+│── README.md
+│── public/ 
+
+
+## Installation
+1. Clone the repository:  
+git clone https://github.com/souravMitra02/dashboard-app.git
+cd my-dashboard
+npm install
+npm run dev
+
