@@ -1,70 +1,76 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchUsers } from "@/utils/fetchUsers";
+import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import { User } from "@/types/User";
-import UserCard from "@/components/UserCard";
-import SearchBar from "@/components/SearchBar";
-import Pagination from "@/components/Pagination";
+import { fetchUserById } from "@/utils/fetchUsers";
 
-const USERS_PER_PAGE = 6;
+export default function UserDetailsPage() {
+  const params = useParams();
+  const userId = params.id;
 
-export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getUsers = async () => {
-      const data = await fetchUsers();
-      setUsers(data);
+    const getUser = async () => {
+      setLoading(true);
+      const data = await fetchUserById(userId);
+      setUser(data);
+      setLoading(false);
     };
-    getUsers();
-  }, []);
+    getUser();
+  }, [userId]);
 
-  // Filter users by name or email
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
-  const startIndex = (currentPage - 1) * USERS_PER_PAGE;
-  const currentUsers = filteredUsers.slice(
-    startIndex,
-    startIndex + USERS_PER_PAGE
-  );
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (!user) return <p className="text-center mt-10">User not found</p>;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Users Dashboard</h1>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6"
+    >
+      <Link
+        href="/users"
+        className="text-blue-500 hover:underline mb-4 inline-block"
+      >
+        &larr; Back to Users
+      </Link>
 
-      <SearchBar
-        value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-          setCurrentPage(1); // reset to first page when searching
-        }}
-      />
+      <h2 className="text-2xl font-bold mb-2">{user.name}</h2>
+      <p className="text-gray-600 mb-1">
+        <strong>Username:</strong> {user.username}
+      </p>
+      <p className="text-gray-600 mb-1">
+        <strong>Email:</strong> {user.email}
+      </p>
+      <p className="text-gray-600 mb-1">
+        <strong>Phone:</strong> {user.phone}
+      </p>
+      <p className="text-gray-600 mb-1">
+        <strong>Website:</strong>{" "}
+        <a href={`https://${user.website}`} target="_blank" className="text-blue-500 hover:underline">
+          {user.website}
+        </a>
+      </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {currentUsers.map((user) => (
-          <UserCard key={user.id} user={user} />
-        ))}
+      <div className="mt-4">
+        <h3 className="font-semibold">Address</h3>
+        <p>
+          {user.address.street}, {user.address.suite}, {user.address.city},{" "}
+          {user.address.zipcode}
+        </p>
       </div>
 
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
-    </div>
+      <div className="mt-4">
+        <h3 className="font-semibold">Company</h3>
+        <p>{user.company.name}</p>
+        <p className="text-gray-600">{user.company.catchPhrase}</p>
+        <p className="text-gray-600">{user.company.bs}</p>
+      </div>
+    </motion.div>
   );
 }
