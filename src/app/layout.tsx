@@ -4,7 +4,6 @@ export const metadata = {
   title: "Dashboard App",
   description: "User Dashboard built with Next.js & TailwindCSS",
 };
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
